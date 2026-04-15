@@ -39,16 +39,24 @@ describe('detectCombination', () => {
       expect(detectCombination([c('4'), c('5'), c('6'), c('7'), c('8'), c('9')])).toBe(CombinationType.STRAIGHT);
     });
 
-    it('3-A straight (Ace low) returns STRAIGHT', () => {
-      expect(detectCombination([c('A'), c('2'), c('3'), c('4'), c('5')])).toBe(CombinationType.STRAIGHT);
+    it('3 consecutive cards returns STRAIGHT', () => {
+      expect(detectCombination([c('4'), c('5'), c('6')])).toBe(CombinationType.STRAIGHT);
+    });
+
+    it('hand containing 2 (Heo) is NOT a straight', () => {
+      expect(detectCombination([c('A'), c('2'), c('3'), c('4'), c('5')])).toBe(null);
+    });
+
+    it('K-A-2 ending is NOT a straight (no wrap)', () => {
+      expect(detectCombination([c('K'), c('A'), c('2'), c('3'), c('4')])).toBe(null);
     });
 
     it('non-consecutive fails STRAIGHT', () => {
       expect(detectCombination([c('4'), c('5'), c('7'), c('8'), c('9')])).toBe(null);
     });
 
-    it('4 cards is not a STRAIGHT', () => {
-      expect(detectCombination([c('4'), c('5'), c('6'), c('7')])).toBe(null);
+    it('non-consecutive 4 cards is not a STRAIGHT', () => {
+      expect(detectCombination([c('4'), c('5'), c('7'), c('8')])).toBe(null);
     });
 
     it('cross-suit straight is still STRAIGHT', () => {

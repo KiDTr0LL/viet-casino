@@ -45,8 +45,8 @@ export function detectCombination(cards: Card[]): CombinationType | null {
   // PAIR
   if (cards.length === 2 && maxCount === 2) return CombinationType.PAIR;
 
-  // STRAIGHT — 5+ consecutive ranks
-  if (cards.length >= 5) {
+  // STRAIGHT — 3+ consecutive ranks (TLMN: 2 is never in a straight)
+  if (cards.length >= 3) {
     if (isStraight(cards)) return CombinationType.STRAIGHT;
   }
 
@@ -60,24 +60,12 @@ export function detectCombination(cards: Card[]): CombinationType | null {
 }
 
 function isStraight(cards: Card[]): boolean {
+  // Rule: 2 (Heo) is NEVER in a straight. No wrap-arounds, no K-A-2, no A-2-3-4-5.
+  if (cards.some(c => c.rank === '2')) return false;
+
   const values = cards.map(c => rankValue(c, TIENLEN_RANK_ORDER)).sort((a, b) => a - b);
-
-  // Check wheel straight first: A-2-3-4-5 → [0, 1, 2, 3, 12]
-  if (isWheel(values)) return true;
-
   for (let i = 1; i < values.length; i++) {
     if (values[i] !== values[i - 1] + 1) return false;
-  }
-  return true;
-}
-
-function isWheel(sortedValues: number[]): boolean {
-  // Wheel in Tiến Lên: A-2-3-4-5
-  // A=11, 2=12, 3=0, 4=1, 5=2 → sorted [0,1,2,11,12]
-  if (sortedValues.length !== 5) return false;
-  const wheel = [0, 1, 2, 11, 12];
-  for (let i = 0; i < wheel.length; i++) {
-    if (sortedValues[i] !== wheel[i]) return false;
   }
   return true;
 }

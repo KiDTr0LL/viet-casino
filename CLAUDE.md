@@ -71,16 +71,23 @@ viet-cards-3d-casino/
 
 ## Game Rules Reference
 
-**Tiến Lên (Climbing Cards)**
+**Tiến Lên Miền Nam (TLMN)**
 - 2–4 players, 52-card deck, goal: be first to play all cards
 - Rank order: 3 < 4 < … < 10 < J < Q < K < A < 2
-- Suit order: ♣ < ♦ < ♥ < ♠ (for tiebreaking)
-- Valid combos: Single, Pair, Triple, Quad, Straight (5+), Pair Straight (3+), Triple Straight (2+), Full House
-- Special: "Rainbow" (3–7 same suit) beats quad 2s; "Bomb" (quad 2s) beats everything except higher bomb
+- Suit order: ♠ < ♣ < ♦ < ♥ (for tiebreaking same-rank cards)
+- Valid combos: Single, Pair, Triple, Straight (3+, no 2), 3 Đôi Thông, 4 Đôi Thông
+- **Passing locks you out** for the rest of the round (Bỏ Vòng). Round resets when all active players pass or table is clear.
+- **2 (Heo) is never in a straight.** No wrap-arounds, no K-A-2, no A-2-3-4-5.
+- Instant wins: Sảnh Rồng (12-card 3→A), Tứ Quý Heo, 5 Đôi Thông, 6 Đôi
+- Bomb rules: 4 Đôi Thông can be played out of turn to cut a 2
 
-**Mậu Binh (Poker Showdown)**
-- 2–4 players, arrange 13 cards into 3 rows: Top (3 cards) ≤ Mid (5 cards) ≤ Bot (5 cards)
-- Invalid arrangement = "Mậu Binh" (fault), −3 points
+**Mậu Binh (Binh Xập Xám)**
+- 2–4 players, arrange 13 cards into 3 rows: Top (3 cards) < Mid (5 cards) < Bottom (5 cards)
+- Invalid arrangement = **Binh Lủng** — player loses all 3 rows to every opponent
+- Top Row (3 cards) max hand = Three of a Kind. No Straights, Flushes, or Full Houses possible.
+- Lowest straight: A-2-3-4-5. Highest: 10-J-Q-K-A.
+- Instant wins: Sảnh Rồng (+50 Chi), Dragon Flush (+100 Chi), Lục Phé Bôn (+18 Chi), Ba Cái Thùng (+18 Chi), Ba Cái Sảnh (+18 Chi)
+- Scoring: base 1 Chi per row; Sweep (win all 3) = ×2; bonuses: Top trips +3, Mid quads +8, Bottom straight flush +5
 
 ## Known Gaps (PRD Status)
 

@@ -797,11 +797,10 @@ model GameSession {
 
 ## 6. Game Mechanics
 
-### 6.1 Tiến Lên (Climbing Cards)
+### 6.1 Tiến Lên Miền Nam (TLMN)
 
 **Game Overview:**
-- 2-4 players
-- Standard 52-card deck (no jokers)
+- 2–4 players, standard 52-card deck (no jokers)
 - Goal: Be first to play all cards
 
 **Card Rankings (Low to High):**
@@ -809,80 +808,105 @@ model GameSession {
 3 < 4 < 5 < 6 < 7 < 8 < 9 < 10 < J < Q < K < A < 2
 ```
 
-**Suit Rankings (for same rank):**
+**Suit Rankings (Low to High) — used for tiebreaking same-rank cards:**
 ```
-Clubs (♣) < Diamonds (♦) < Hearts (♥) < Spades (♠)
+Spades (♠) < Clubs (♣) < Diamonds (♦) < Hearts (♥)
 ```
 
-**Valid Combinations:**
+**Valid Combinations (Bộ):**
 | Type | Example | Rules |
 |------|---------|-------|
-| **Single** | 7♠ | Any one card |
-| **Pair** | K♣ K♥ | Two cards of same rank |
-| **Triple** | 5♦ 5♠ 5♣ | Three cards of same rank |
-| **Quad** | 9♣ 9♦ 9♥ 9♠ | Four cards of same rank |
-| **Straight** | 4-5-6-7-8 | 5+ consecutive ranks |
-| **Pair Straight** | 3-3,4-4,5-5 | 3+ consecutive pairs |
-| **Triple Straight** | 7-7-7,8-8-8 | 2+ consecutive triples |
-| **Full House** | K-K-K, 4-4 | Triple + Pair (specific rules) |
+| **Single (Rác)** | 7♠ | Any one card |
+| **Pair (Đôi)** | K♣ K♥ | 2 cards, same rank |
+| **Triple (Sám cô)** | 5♦ 5♠ 5♣ | 3 cards, same rank |
+| **Straight (Sảnh)** | 4-5-6-7-8 | 3+ consecutive ranks; **2 (Heo) is never in a straight** |
+| **3 Consecutive Pairs (3 Đôi Thông)** | 3-3, 4-4, 5-5 | 3+ consecutive same-rank pairs |
+| **4 Consecutive Pairs (4 Đôi Thông)** | 3-3, 4-4, 5-5, 6-6 | 4 consecutive pairs; **can be played out of turn to cut 2** |
 
-**Special Rules:**
-- **2** is highest single card
-- **3-4-5-6-7** of same suit = "Rainbow" (beats quad 2s)
-- **4-of-a-kind 2** = "Bomb" (beats everything except higher bomb)
-- **Pass** = Skip turn (can rejoin later)
+**Turn & Round Mechanics (Vòng Đánh):**
+- **First Game:** Player with **3♠** goes first; play must include 3♠
+- **Subsequent Games:** Winner of previous game goes first with any valid combination
+- **Passing (Bỏ Vòng):** When a player passes they are **locked out** (`hasPassed = true`) for the rest of this round. They cannot play again until the round resets.
+- **Round Reset:** When all remaining active players have played and the table is clear, or when 3 of 4 players have passed, the round ends. All `hasPassed` states reset to `false`. The last active player starts the new round.
 
-**Winning:**
-- First player to empty hand wins
-- Points based on remaining cards (loser pays winner)
+**Bombing Rules (Chặt Heo):**
+- **3 Đôi Thông** — cuts a single 2. Played in normal turn order.
+- **Tứ Quý (Four of a Kind)** — cuts a single 2, a Pair of 2s, or 3 Đôi Thông.
+- **4 Đôi Thông** — cuts a single 2, Pair of 2s, 3 Đôi Thông, or Tứ Quý. **Can be played out of turn** to cut a 2 that was just played.
 
-### 6.2 Mậu Binh (Poker Showdown)
+**Instant Wins (Tới Trắng) — checked after dealing, before play begins:**
+| Type | Description | Payout |
+|------|-------------|--------|
+| **Sảnh Rồng** | 12 cards 3→A (consecutive) | Win instantly |
+| **Tứ Quý Heo** | All four 2s | Win instantly |
+| **5 Đôi Thông** | 5 consecutive pairs | Win instantly |
+| **6 Đôi** | 6 pairs (not required to be consecutive) | Win instantly |
+
+**Endgame (Thúi Heo / Thúi Hàng):**
+- Game ends the moment one player plays their last card
+- Remaining players reveal their hands
+- Any player holding 2s, Tứ Quý, or Đôi Thông pays a penalty directly to the winner
+
+### 6.2 Mậu Binh (Binh Xập Xám / Chinese Poker)
 
 **Game Overview:**
-- 2-4 players
-- Standard 52-card deck
-- Goal: Create best 3-row hand structure
+- 2–4 players, 52-card deck
+- Goal: Arrange 13 cards into 3 rows (Chi) and beat opponents row-by-row
 
-**Hand Structure:**
+**Hand Structure (Chi):**
 ```
-┌─────────────────┐
-│  Top Row (3 cards)   │ ← Lowest poker hand
-├─────────────────┤
-│  Mid Row (5 cards)  │ ← Medium poker hand
-├─────────────────┤
-│  Bot Row (5 cards)  │ ← Highest poker hand
-└─────────────────┘
+┌────────────────────┐
+│  Chi 3 — Top (3 cards)  │ ← Must be the weakest hand
+├────────────────────┤
+│  Chi 2 — Middle (5 cards)│ ← Must be weaker than Bottom
+├────────────────────┤
+│  Chi 1 — Bottom (5 cards)│ ← Must be the strongest hand
+└────────────────────┘
 ```
 
-**Row Rankings (Low to High):**
-- Top: Best 3-card hand (pair, high card, flush)
-- Mid: Best 5-card hand (standard poker)
-- Bot: Best 5-card hand (must beat mid)
+**Binh Lủng (Foul):**
+- If Chi 2 outranks Chi 1, or Chi 3 outranks Chi 2 → **Binh Lủng**
+- Player instantly loses all 3 rows to every opponent and pays a penalty
 
-**Valid Hands:**
-| Rank | Hand | Example |
-|------|------|---------|
-| 1 | High Card | A-K-Q-J-9 |
-| 2 | One Pair | K-K-7-4-2 |
-| 3 | Two Pair | Q-Q-8-8-3 |
-| 4 | Three of a Kind | J-J-J-5-2 |
-| 5 | Straight | 5-6-7-8-9 |
-| 6 | Flush | A-K-Q-J-10 (same suit) |
-| 7 | Full House | K-K-K-4-4 |
-| 8 | Four of a Kind | 9-9-9-9-2 |
-| 9 | Straight Flush | 5-6-7-8-9 (same suit) |
-| 10 | Royal Flush | A-K-Q-J-10 (same suit) |
+**Standard Poker Hand Rankings (Weakest to Strongest):**
+| Rank | Hand | Notes |
+|------|------|-------|
+| 1 | High Card | Highest single card |
+| 2 | One Pair | Two cards, same rank |
+| 3 | Two Pair | Two different pairs |
+| 4 | Three of a Kind | Three cards, same rank |
+| 5 | Straight | 5 consecutive ranks; **A-2-3-4-5 is the lowest straight; 10-J-Q-K-A is the highest** |
+| 6 | Flush | 5 cards, same suit |
+| 7 | Full House | Three of a kind + one pair |
+| 8 | Four of a Kind | Four cards, same rank |
+| 9 | Straight Flush | 5 consecutive cards, same suit |
+| 10 | Royal Flush | A-K-Q-J-10, same suit |
 
-**Scoring:**
-- Each row compared against opponent's row
-- Win row = +1 point, Loss = -1 point
-- **Mậu Binh** (fault): Invalid hand = -3 points
-- **Sám** (3-of-a-kind in top): +3 bonus points
-- **Phù lục** (flush in all rows): +6 bonus points
+**Top Row (Chi 3) Exception:** Only 3 cards → can be High Card, One Pair, Two Pair, or Three of a Kind. Straights, Flushes, Full Houses, and Quads are **impossible** in 3 cards.
 
-**Winning:**
-- Highest total points wins round
-- Multiple rounds = tournament format
+**Instant Wins (Mậu Binh Tới Trắng) — checked before row comparison:**
+| Type | Description | Payout |
+|------|-------------|--------|
+| **Sảnh Rồng** | 13 consecutive cards 2→A (suits don't matter) | +50 Chi per opponent |
+| **Sảnh Rồng Đồng Hoa** | All 13 cards same suit AND consecutive | +100 Chi per opponent |
+| **Lục Phé Bôn (6 Pairs)** | Exactly 6 pairs in 13 cards | +18 Chi per opponent |
+| **Ba Cái Thùng (3 Flushes)** | Flush in Bottom + Middle, 3 same-suit cards in Top | +18 Chi per opponent |
+| **Ba Cái Sảnh (3 Straights)** | Straight in Bottom + Middle, 3 consecutive in Top | +18 Chi per opponent |
+
+**Scoring (So Chi):**
+- Base: **1 Chi = 1 base bet**
+- Each row compared to opponent's row → winner +1 Chi, loser −1 Chi
+- **Sập Hầm (Sweep):** Winning all 3 rows against one opponent → winnings × 2
+
+**Bonus Multipliers (Chi Thưởng) — awarded in addition to base Chi:**
+| Bonus | Condition | Bonus Chi |
+|------|----------|-----------|
+| Sám Chi Cuối | Win Top (Chi 3) with Three of a Kind | +3 |
+| Cù Lũ Chi Giữa | Win Middle (Chi 2) with Full House | +2 |
+| Tứ Quý Chi Đầu | Win Bottom (Chi 1) with Four of a Kind | +4 |
+| Tứ Quý Chi Giữa | Win Middle (Chi 2) with Four of a Kind | +8 |
+| Thùng Phá Sảnh Chi Đầu | Win Bottom (Chi 1) with Straight Flush | +5 |
+| Thùng Phá Sảnh Chi Giữa | Win Middle (Chi 2) with Straight Flush | +10 |
 
 ### 6.3 Turn Timer System
 
