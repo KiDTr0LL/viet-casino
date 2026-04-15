@@ -1,6 +1,14 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const VALID_RANKS_PLAIN: string[] = [
+  '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2',
+];
+
 export const VALID_RANKS = [
   '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2',
 ] as const;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const VALID_SUITS_PLAIN: string[] = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'];
 
 export const VALID_SUITS = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
 
@@ -12,10 +20,10 @@ export class Card {
   readonly suit: Suit;
 
   constructor(rank: string, suit: string) {
-    if (!(VALID_RANKS as readonly string[]).includes(rank)) {
+    if (!VALID_RANKS_PLAIN.includes(rank)) {
       throw new Error(`Invalid rank: ${rank}`);
     }
-    if (!(VALID_SUITS as readonly string[]).includes(suit)) {
+    if (!VALID_SUITS_PLAIN.includes(suit)) {
       throw new Error(`Invalid suit: ${suit}`);
     }
     this.rank = rank as Rank;
